@@ -3,42 +3,35 @@ import { useState, useEffect } from "react";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { ref, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../lib/firebase-config";
+import Image from "next/image"
 
 interface Product {
   id: string;
   Name: string;
   Description: string;
-  Price: number;
+  Price: string;
   imageUrl: string;
+  [key: string]: any;
 }
 
 export default function Products() {
   const [productsList, setProductList] = useState<Product[]>([]);
   const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
 
-
   useEffect(() => {
     const q = query(collection(db, "products"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const products: string[] = [];
+      const products: Product[] = [];
       let imagesToLoad = snapshot.docs.length;
       snapshot.forEach((doc) => {
-        const data = doc.data();
-        const product = {
-          id: doc.id,
-          ...data,
-        };
-        // Create a storage reference for the product image using the Image field from the product document
+        const data = doc.data() as Product;
+        const product = { ...data, id: doc.id, imageUrl: "" };
         const imageRef = ref(storage, `product_images/${data.Image}`);
-        // Get the download URL for the image and add it to the product object
         getDownloadURL(imageRef)
           .then((url) => {
             product.imageUrl = url;
-            // Add the completed product to the products array
             products.push(product);
-            // Decrement the counter for images left to load
             imagesToLoad--;
-            // If all images have been loaded, set the products list and imagesLoaded state variables
             if (imagesToLoad === 0) {
               setProductList(products);
               setImagesLoaded(true);
@@ -63,8 +56,10 @@ export default function Products() {
                 className="bg-gray-300 p-5 rounded-lg items-center text-center"
                 key={product.id}
               >
-                <img
+                <Image
                   className="mx-auto"
+                  width={300}
+                  height={300}
                   src={product.imageUrl}
                   alt={product.Name}
                 />

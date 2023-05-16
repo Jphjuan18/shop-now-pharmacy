@@ -3,18 +3,21 @@ import { useState } from "react";
 import { db, storage } from "../../lib/firebase-config";
 import { collection, setDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
+import Image from "next/image"
 
 export default function Admin() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
+const [imageFile, setImageFile] = useState<File | null>(null);
+const [imageUrl, setImageUrl] = useState("");
 
-  const handleFileUpload = (event: React.FormEvent<HTMLFormElement>) => {
-    const file = event.target.files[0];
-    setImageFile(file);
-    setImageUrl(URL.createObjectURL(file));
+const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; // Use optional chaining to handle null values
+    if (file) {
+      setImageFile(file);
+      setImageUrl(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -23,9 +26,11 @@ export default function Admin() {
     // Generate a unique document ID
     const docRef = doc(collection(db, "products"));
   
-    // Upload the image to Firebase Storage with the document ID as the file name
-    const imageRef = ref(storage, `product_images/${docRef.id}`);
-    await uploadBytes(imageRef, imageFile);
+    if (imageFile) { // Add a check for null values
+        // Upload the image to Firebase Storage with the document ID as the file name
+        const imageRef = ref(storage, `product_images/${docRef.id}`);
+        await uploadBytes(imageRef, imageFile);
+    }
   
     // Add the product information to Firebase Firestore with the document ID as the ID field
     await setDoc(docRef, {
@@ -93,7 +98,7 @@ export default function Admin() {
             onChange={handleFileUpload}
             className="border border-gray-200 p-2 rounded"
           />
-          {imageUrl && <img src={imageUrl} alt="" className="max-w-full h-auto mt-2" />}
+          {imageUrl && <Image src={imageUrl} alt="" className="max-w-full h-auto mt-2" width={300} height={300}/>}
         </div>
         <button type="submit" className="bg-blue-500 text-white rounded py-2 px-4 hover:bg-blue-600 transition duration-200">
           Add

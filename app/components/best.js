@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 // import { db, storage } from "../../lib/firebase-config";
 import React from "react";
 // import { collection, onSnapshot, query } from "firebase/firestore";
@@ -44,8 +45,10 @@ export default function Best() {
         <h1 className="text-center text-4xl py-5">Best Sellers</h1>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           <div className="bg-gray-300 p-5 rounded-lg items-center text-center">
-            <img
+            <Image
               className="mx-auto"
+              width={300}
+              height={300}
               src="https://firebasestorage.googleapis.com/v0/b/shop-now-e0870.appspot.com/o/product_images%2F4hPlyZ6nwWI64uRiILQl?alt=media&token=a43ce90e-7765-4273-8157-a78bac39d056"
               alt="Semaglutide"
             />
@@ -61,8 +64,10 @@ export default function Best() {
             </button>
           </div>
           <div className="bg-gray-300 p-5 rounded-lg items-center text-center">
-            <img
+            <Image
               className="mx-auto"
+              width={300}
+              height={300}
               src="https://firebasestorage.googleapis.com/v0/b/shop-now-e0870.appspot.com/o/product_images%2F4hPlyZ6nwWI64uRiILQl?alt=media&token=a43ce90e-7765-4273-8157-a78bac39d056"
               alt="IGF-1"
             />
@@ -76,8 +81,10 @@ export default function Best() {
             </button>
           </div>
           <div className="bg-gray-300 p-5 rounded-lg items-center text-center">
-            <img
+            <Image
               className="mx-auto"
+              width={300}
+              height={300}
               src="https://firebasestorage.googleapis.com/v0/b/shop-now-e0870.appspot.com/o/product_images%2F4hPlyZ6nwWI64uRiILQl?alt=media&token=a43ce90e-7765-4273-8157-a78bac39d056"
               alt="Semaglutide"
             />
