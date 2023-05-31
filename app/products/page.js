@@ -1,26 +1,42 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   collection,
   onSnapshot,
   query,
-  where,
   orderBy,
+  where,
 } from "firebase/firestore";
 import { ref, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../lib/firebase-config";
 import Image from "next/image";
 import { useCartContext } from "../context/dataContext";
 
-export default function Best() {
+export default function Products() {
   const [productsList, setProductList] = useState([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filter, setFilter] = useState({ cost: "all", name: "" });
 
   const { items, addItem, isProductInCart, setCart } = useCartContext();
 
   const addToCart = (product) => {
     addItem(product);
+  };
+
+  const applyFilters = () => {
+    let filtered = productsList;
+    if (filter.cost !== "all") {
+      filtered = filtered.filter(
+        (product) => product.Price <= parseInt(filter.cost)
+      );
+      // filtered.sort((a, b) => a.Price - b.Price); // sort by price cost
+    }
+    if (filter.name !== "") {
+      const regex = new RegExp(filter.name, "i");
+      filtered = filtered.filter((product) => regex.test(product.Name));
+    }
+    setFilteredProducts(filtered);
   };
 
   useEffect(() => {
@@ -29,28 +45,25 @@ export default function Best() {
       setCart(cartItems);
     }
 
-    const q = query(
-      collection(db, "products"),
-      where("isBestSeller", "==", true),
-      orderBy("Name")
-    );
-
+    const q = query(collection(db, "products"), orderBy("Name"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const products = [];
-      let imagesToLoad = snapshot.docs.length;
       snapshot.forEach((doc) => {
         const data = doc.data();
         const product = { ...data, id: doc.id, imageUrl: "" };
+        products.push(product); // push the products without the image urls
         const imageRef = ref(storage, `product_images/${data.Image}`);
         getDownloadURL(imageRef)
           .then((url) => {
-            product.imageUrl = url;
-            products.push(product);
-            imagesToLoad--;
-            if (imagesToLoad === 0) {
-              // sort the products array alphabetically by name
-              products.sort((a, b) => a.Name.localeCompare(b.Name));
+            // find the index of the product in the array
+            const index = products.findIndex((p) => p.id === doc.id);
+            // update the imageUrl of the product at that index
+            products[index].imageUrl = url;
+            // check if all images have been loaded
+            const allImagesLoaded = products.every((p) => p.imageUrl !== "");
+            if (allImagesLoaded) {
               setProductList(products);
+              setFilteredProducts(products);
               setImagesLoaded(true);
             }
           })
@@ -66,15 +79,62 @@ export default function Best() {
     sessionStorage.setItem("cartItems", JSON.stringify(items));
   }, [items]);
 
+  useEffect(() => {
+    applyFilters();
+  }, [productsList, filter]); // reapply filters whenever productsList or filter changes
+
+  const handleCostFilter = (e) => {
+    setFilter({ ...filter, cost: e.target.value });
+  };
+
+  const handleNameFilter = (e) => {
+    setFilter({ ...filter, name: e.target.value });
+  };
+
   return (
     <>
-      {" "}
-      <div className="py-6 bg-gray-100">
+      <div className="py-12 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-4xl py-5">Best Sellers</h1>
+          <div className="grid py-3 grid-cols-2 sm:flex sm:flex-row">
+            <div className="mr-5 flex-col sm:flex-row">
+              <label htmlFor="costFilter" className="mr-2">
+                Filter by cost:
+              </label>
+              <select
+                className="w-16"
+                id="costFilter"
+                value={filter.cost}
+                onChange={handleCostFilter}
+              >
+                <option value="all">All</option>
+                <option value="10">Less than $10</option>
+                <option value="20">Less than $20</option>
+                <option value="30">Less than $30</option>
+                <option value="40">Less than $40</option>
+                <option value="50">Less than $50</option>
+                <option value="60">Less than $60</option>
+                <option value="70">Less than $70</option>
+                <option value="80">Less than $80</option>
+                <option value="90">Less than $90</option>
+                <option value="100">Less than $100</option>
+              </select>
+            </div>
+            <div className="mr-5 flex-col sm:flex-row">
+              <label htmlFor="nameFilter" className="mr-2">
+                Search by name:
+              </label>
+              <input
+                className="w-32 sm:w-48"
+                id="nameFilter"
+                type="text"
+                value={filter.name}
+                onChange={handleNameFilter}
+              />
+            </div>
+          </div>
           {imagesLoaded ? (
             <div className="grid grid-cols-2 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {productsList.map((product) => (
+              {filteredProducts.map((product) => (
                 <div
                   className="bg-gray-300 p-5 rounded-lg items-center text-center"
                   key={product.id}

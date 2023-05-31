@@ -1,15 +1,43 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useCookies } from "react-cookie";
+import { signOut } from "firebase/auth";
+import { auth } from "../../lib/firebase-config";
 
-export default function Navbar(props) {
+export default function Navbar() {
   const [navbarOpen, setNavbarOpen] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(["uid", "isAuth"]);
+  const [isUid, setIsUid] = useState("");
+  const [isAuth, setIsAuth] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsAuth(cookies.isAuth === "true" ? true : false);
+    setIsUid(cookies.uid);
+    const adminTokens = process.env.NEXT_PUBLIC_ADMIN_VARIABLES_TOKENS
+      ? process.env.NEXT_PUBLIC_ADMIN_VARIABLES_TOKENS.split(",")
+      : [];
+    if (adminTokens.includes(cookies.uid)) {
+      setIsAdmin(true);
+    }
+  }, [cookies]);
+
+  const signUserOut = () => {
+    signOut(auth).then(() => {
+      removeCookie("isAuth");
+      removeCookie("uid");
+      removeCookie("isAdmin");
+      window.location.pathname = "/";
+    });
+  };
+
   return (
     <nav className="flex py-3 bg-red-500 border-2 border-red-500 text-white">
       <div className="w-full mx-1 flex place-content-between">
         <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <Link href="/">
-            <h1 className="pl-5 pt-1 text-2xl">Peptide Connect</h1>
+            <h1 className="pl-5 pt-1 text-2xl">Shop Now Pharmacy</h1>
           </Link>
           <button
             className="text-secondary cursor-pointer text-2xl leading-none px-3 pr-5 rounded bg-transparent block lg:hidden outline-none focus:outline-none"
@@ -40,32 +68,49 @@ export default function Navbar(props) {
                 </span>
               </Link>
             </li>
-            <li className="nav-item hidden lg:flex">
-              <Link href={"/cart"}>
-                <span className="px-3 py-2 mx-1 items-center text-xs uppercase leading-snug hover:opacity-75 bg-slate-100 rounded-lg">
-                  🛒
-                </span>
-              </Link>
-            </li>
-            <li className="nav-item flex flex-row">
-              <Link href={"/account"}>
-                <span className="px-3 py-2 mx-1 items-center text-center text-xs uppercase leading-snug hover:opacity-75 bg-slate-100 rounded-lg">
-                  👤
-                </span>
-              </Link>
-              <Link href={"/cart"}>
-                <span className="lg:hidden px-3 py-2 mx-1 items-center text-xs uppercase leading-snug hover:opacity-75 bg-slate-100 rounded-lg">
-                  🛒
-                </span>
-              </Link>
-            </li>
+            {isAuth && (
+              <li className="nav-item flex flex-row">
+                <Link href={"/account"}>
+                  <span className="px-3 py-2 flex items-center text-xs uppercase leading-snug hover:opacity-75">
+                    Account
+                  </span>
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
-              <Link href={"/admin"}>
+              <Link href={"/cart"}>
                 <span className="px-3 py-2 flex items-center text-xs uppercase leading-snug hover:opacity-75">
-                  Admin
+                  Cart&nbsp;
                 </span>
               </Link>
             </li>
+
+            {isAdmin && (
+              <li className="nav-item">
+                <Link href="/admin">
+                  <span className="px-3 py-2 flex items-center text-xs uppercase leading-snug hover:opacity-75">
+                    Admin
+                  </span>
+                </Link>
+              </li>
+            )}
+            {isAuth ? (
+              <li>
+                <button onClick={signUserOut}>
+                  <span className="px-3 py-2 flex items-center text-xs uppercase leading-snug hover:opacity-75">
+                    Logout
+                  </span>
+                </button>
+              </li>
+            ) : (
+              <li>
+                <Link href="/login">
+                  <span className="px-3 py-2 flex items-center text-xs uppercase leading-snug hover:opacity-75">
+                    Login
+                  </span>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

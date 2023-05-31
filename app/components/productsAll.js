@@ -1,19 +1,12 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
-import {
-  collection,
-  onSnapshot,
-  query,
-  where,
-  orderBy,
-} from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { ref, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../lib/firebase-config";
 import Image from "next/image";
 import { useCartContext } from "../context/dataContext";
 
-export default function Best() {
+export default function Products() {
   const [productsList, setProductList] = useState([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
@@ -29,27 +22,23 @@ export default function Best() {
       setCart(cartItems);
     }
 
-    const q = query(
-      collection(db, "products"),
-      where("isBestSeller", "==", true),
-      orderBy("Name")
-    );
-
+    const q = query(collection(db, "products"), orderBy("Name"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const products = [];
-      let imagesToLoad = snapshot.docs.length;
       snapshot.forEach((doc) => {
         const data = doc.data();
         const product = { ...data, id: doc.id, imageUrl: "" };
+        products.push(product); // push the products without the image urls
         const imageRef = ref(storage, `product_images/${data.Image}`);
         getDownloadURL(imageRef)
           .then((url) => {
-            product.imageUrl = url;
-            products.push(product);
-            imagesToLoad--;
-            if (imagesToLoad === 0) {
-              // sort the products array alphabetically by name
-              products.sort((a, b) => a.Name.localeCompare(b.Name));
+            // find the index of the product in the array
+            const index = products.findIndex((p) => p.id === doc.id);
+            // update the imageUrl of the product at that index
+            products[index].imageUrl = url;
+            // check if all images have been loaded
+            const allImagesLoaded = products.every((p) => p.imageUrl !== "");
+            if (allImagesLoaded) {
               setProductList(products);
               setImagesLoaded(true);
             }
@@ -65,13 +54,11 @@ export default function Best() {
   useEffect(() => {
     sessionStorage.setItem("cartItems", JSON.stringify(items));
   }, [items]);
-
   return (
     <>
-      {" "}
-      <div className="py-6 bg-gray-100">
+      <div className="py-12 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-4xl py-5">Best Sellers</h1>
+          <h1 className="text-center text-4xl py-5">Products</h1>
           {imagesLoaded ? (
             <div className="grid grid-cols-2 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {productsList.map((product) => (
