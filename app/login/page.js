@@ -15,7 +15,7 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import toast, { Toaster } from "react-hot-toast";
-// import Forgot from "./Forgot.js";
+import Forgot from "../components/forgot";
 import { useCookies } from "react-cookie";
 
 function Login() {
@@ -314,8 +314,7 @@ function Login() {
           )}
         </div>
       ) : (
-        // <Forgot />
-        <div></div>
+        <Forgot />
       )}
     </>
   );

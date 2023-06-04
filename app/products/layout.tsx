@@ -1,9 +1,12 @@
 
 import { Metadata } from 'next';
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { ref, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../../lib/firebase-config";
  
 export const metadata: Metadata = {
-    title: 'Peptide Products',
-    description: 'Peptide Research Labs Products Page',
+    title: 'Shop Now Pharmacy Products',
+    description: 'Show Now Pharmacy Products Page',
 };
 export default function DashboardLayout({
     children, // will be a page or nested layout
@@ -12,7 +15,7 @@ export default function DashboardLayout({
   }) {
     return (
       <section>
-        {children}
+        {children}      
       </section>
     );
   }

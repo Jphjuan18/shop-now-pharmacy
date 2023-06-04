@@ -25,7 +25,6 @@ export default function Checkout() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
   };
 
   const [cartEmpty, setCartEmpty] = useState(false);
@@ -35,7 +34,7 @@ export default function Checkout() {
 
   useEffect(() => {
     const cartItems = JSON.parse(sessionStorage.getItem("cartItems")) || [];
-    console.log(cartItems);
+
     // console.log(cartItems.length);
     if (cartItems.length > 0) {
       // console.log(cartItems);
@@ -43,6 +42,7 @@ export default function Checkout() {
     } else {
       setCartEmpty(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -201,9 +201,10 @@ export default function Checkout() {
               )}
             </>
           )}
+
           <Link
-            href="/confirmation"
-            className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all ease-in-out duration-200"
+            href={`/confirmation?cartData=${JSON.stringify(items)}`}
+            className="flex py-3 px-4 bg-blue-600 text-white justify-center rounded-md hover:bg-blue-700 transition-all ease-in-out duration-200"
           >
             Place order
           </Link>

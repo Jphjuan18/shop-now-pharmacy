@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-
 import { getCartProducts } from "../helpers/getCartProducts"; // import the new function
 import Image from "next/image";
 import Link from "next/link";
@@ -23,6 +22,7 @@ export default function Cart() {
     } else {
       setCartEmpty(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -150,14 +150,16 @@ export default function Cart() {
         </div>
       )}
       <>
-        <div className="w-full flex justify-center sm:justify-end px-5 mr-5 pt-5">
-          <Link
-            href="/checkout"
-            className="my-4 px-4 py-2 rounded-md text-white font-semibold bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-          >
-            Proceed to Checkout
-          </Link>
-        </div>
+        {!cartEmpty && imagesLoaded && (
+          <div className="w-full flex justify-center sm:justify-end px-5 mr-5 pt-5">
+            <Link
+              href="/checkout"
+              className="my-4 px-4 py-2 rounded-md text-white font-semibold bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+            >
+              Proceed to Checkout
+            </Link>
+          </div>
+        )}
       </>
     </div>
   );

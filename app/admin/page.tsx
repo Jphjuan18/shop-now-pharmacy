@@ -25,7 +25,7 @@ export default function Admin() {
       return      
     }
     setIsAdmin(true)
-  }, [cookies.uid]);
+  }, [cookies.uid, router]);
 
   return (
     <>

@@ -1,41 +1,46 @@
 "use client";
 import { useState, useEffect } from "react";
-import {
-  collection,
-  onSnapshot,
-  query,
-  orderBy,
-  where,
-} from "firebase/firestore";
-import { ref, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../../lib/firebase-config";
 import Image from "next/image";
 import { useCartContext } from "../context/dataContext";
+import Link from "next/link";
+import { useProductContext } from "../context/productsContext";
+import AddToCartButton from "../components/AddToCartButton";
 
 export default function Products() {
-  const [productsList, setProductList] = useState([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [filter, setFilter] = useState({ cost: "all", name: "" });
 
   const { items, addItem, isProductInCart, setCart } = useCartContext();
+  const { productList, setProductList, imagesLoaded } = useProductContext();
 
   const addToCart = (product) => {
     addItem(product);
   };
 
   const applyFilters = () => {
-    let filtered = productsList;
+    let filtered = [...productList];
+
+    // filter by price
     if (filter.cost !== "all") {
       filtered = filtered.filter(
         (product) => product.Price <= parseInt(filter.cost)
       );
-      // filtered.sort((a, b) => a.Price - b.Price); // sort by price cost
     }
+
+    // filter by name
     if (filter.name !== "") {
       const regex = new RegExp(filter.name, "i");
       filtered = filtered.filter((product) => regex.test(product.Name));
     }
+
+    // sort by price
+    if (filter.priceSort === "asc") {
+      filtered.sort((a, b) => a.Price - b.Price);
+    } else if (filter.priceSort === "desc") {
+      filtered.sort((a, b) => b.Price - a.Price);
+    }
+
+    // update filtered products
     setFilteredProducts(filtered);
   };
 
@@ -44,35 +49,7 @@ export default function Products() {
     if (cartItems.length > 0) {
       setCart(cartItems);
     }
-
-    const q = query(collection(db, "products"), orderBy("Name"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const products = [];
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const product = { ...data, id: doc.id, imageUrl: "" };
-        products.push(product); // push the products without the image urls
-        const imageRef = ref(storage, `product_images/${data.Image}`);
-        getDownloadURL(imageRef)
-          .then((url) => {
-            // find the index of the product in the array
-            const index = products.findIndex((p) => p.id === doc.id);
-            // update the imageUrl of the product at that index
-            products[index].imageUrl = url;
-            // check if all images have been loaded
-            const allImagesLoaded = products.every((p) => p.imageUrl !== "");
-            if (allImagesLoaded) {
-              setProductList(products);
-              setFilteredProducts(products);
-              setImagesLoaded(true);
-            }
-          })
-          .catch((error) => {
-            console.log(error.message);
-          });
-      });
-    });
-    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -81,14 +58,20 @@ export default function Products() {
 
   useEffect(() => {
     applyFilters();
-  }, [productsList, filter]); // reapply filters whenever productsList or filter changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productList, filter]); // reapply filters whenever productList or filter changes
 
-  const handleCostFilter = (e) => {
+  const handlePriceFilter = (e) => {
     setFilter({ ...filter, cost: e.target.value });
   };
 
   const handleNameFilter = (e) => {
     setFilter({ ...filter, name: e.target.value });
+  };
+
+  // handle sort by price
+  const handleSortByPrice = (e) => {
+    setFilter({ ...filter, priceSort: e.target.value });
   };
 
   return (
@@ -97,14 +80,29 @@ export default function Products() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid py-3 grid-cols-2 sm:flex sm:flex-row">
             <div className="mr-5 flex-col sm:flex-row">
-              <label htmlFor="costFilter" className="mr-2">
-                Filter by cost:
+              <label htmlFor="priceSort" className="mr-2">
+                Sort by price:
+              </label>
+              <select
+                className="w-32"
+                id="priceSort"
+                value={filter.priceSort}
+                onChange={handleSortByPrice}
+              >
+                <option value="">-</option>
+                <option value="asc">Low to High</option>
+                <option value="desc">High to Low</option>
+              </select>
+            </div>
+            <div className="mr-5 flex-col sm:flex-row">
+              <label htmlFor="priceFilter" className="mr-2">
+                Filter by price:
               </label>
               <select
                 className="w-16"
-                id="costFilter"
+                id="priceFilter"
                 value={filter.cost}
-                onChange={handleCostFilter}
+                onChange={handlePriceFilter}
               >
                 <option value="all">All</option>
                 <option value="10">Less than $10</option>
@@ -139,35 +137,23 @@ export default function Products() {
                   className="bg-gray-300 p-5 rounded-lg items-center text-center"
                   key={product.id}
                 >
-                  <Image
-                    className="mx-auto"
-                    width={300}
-                    height={300}
-                    src={product.imageUrl}
-                    alt={product.Name}
-                  />
-                  <h3 className="text-lg font-medium text-gray-900 py-2">
-                    {product.Name}
-                  </h3>
-                  <p className="mt-2 text-gray-500 h-24 overflow-hidden">
-                    {product.Description}
-                  </p>
-                  <p className="mt-2 text-gray-500">${product.Price}</p>
-                  <button
-                    onClick={() => addToCart(product.id)}
-                    className={`mt-4 px-4 py-2 rounded-md text-white font-semibold ${
-                      isProductInCart(product.id)
-                        ? "bg-green-600"
-                        : "bg-blue-600 hover:bg-blue-700"
-                    } focus:outline-none focus:ring-2 ${
-                      isProductInCart(product.id)
-                        ? "focus:ring-green-600"
-                        : "focus:ring-blue-600"
-                    } focus:ring-offset-2`}
-                    disabled={isProductInCart(product.id)}
-                  >
-                    {isProductInCart(product.id) ? "Added" : "Add to Cart"}
-                  </button>
+                  <Link href={`/products/${product.id}`}>
+                    <Image
+                      className="mx-auto"
+                      width={300}
+                      height={300}
+                      src={product.imageUrl}
+                      alt={product.Name}
+                    />
+                    <h3 className="text-lg font-medium text-gray-900 py-2">
+                      {product.Name}
+                    </h3>
+                    <p className="mt-2 text-gray-500 h-24 overflow-hidden">
+                      {product.Description}
+                    </p>
+                    <p className="mt-2 text-gray-500">${product.Price}</p>
+                  </Link>
+                  <AddToCartButton productId={product.id} />
                 </div>
               ))}
             </div>

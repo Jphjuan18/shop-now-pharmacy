@@ -13,8 +13,10 @@ export default function Terms() {
         </p>
 
         <p className="mb-6">
-          <strong>1. Age Requirement</strong> <br />
-          You must be at least 18 years old to use the Website.
+          <strong>1. Changes to Terms and Conditions</strong> <br />
+          We may revise these Terms at any time without notice by updating this
+          page. Your continued use of the Website after any such changes
+          constitutes your acceptance of the new Terms.
         </p>
 
         <p className="mb-6">
@@ -105,14 +107,7 @@ export default function Terms() {
         </p>
 
         <p className="mb-6">
-          <strong>11. Changes to Terms and Conditions</strong> <br />
-          We may revise these Terms at any time without notice by updating this
-          page. Your continued use of the Website after any such changes
-          constitutes your acceptance of the new Terms.
-        </p>
-
-        <p className="mb-6">
-          <strong>12. Contact Us</strong> <br />
+          <strong>11. Contact Us</strong> <br />
           If you have any questions or comments about these Terms, please
           contact us at [email address].
         </p>
