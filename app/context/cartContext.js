@@ -1,10 +1,22 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext({});
 
 export const CartContextProvider = ({ children }) => {
   const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const cartItems = JSON.parse(sessionStorage.getItem("cartItems")) || [];
+    if (cartItems.length > 0) {
+      setCart(cartItems);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("cartItems", JSON.stringify(items));
+  }, [items]);
 
   const addItem = (item) => {
     const cartItemIndex = items.findIndex((i) => i.id === item);

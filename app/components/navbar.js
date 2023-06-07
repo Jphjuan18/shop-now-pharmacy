@@ -1,33 +1,36 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useCookies } from "react-cookie";
 import { signOut } from "firebase/auth";
 import { auth } from "../../lib/firebase-config";
+import { useUserContext } from "../context/userContext";
 
 export default function Navbar() {
   const [navbarOpen, setNavbarOpen] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(["uid", "isAuth"]);
   const [isUid, setIsUid] = useState("");
   const [isAuth, setIsAuth] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  const { user, setUser, authContext, setAuthContext } = useUserContext();
+
   useEffect(() => {
-    setIsAuth(cookies.isAuth === "true" ? true : false);
-    setIsUid(cookies.uid);
+    setIsAuth(authContext === true ? true : false);
+    setIsUid(user);
     const adminTokens = process.env.NEXT_PUBLIC_ADMIN_VARIABLES_TOKENS
       ? process.env.NEXT_PUBLIC_ADMIN_VARIABLES_TOKENS.split(",")
       : [];
-    if (adminTokens.includes(cookies.uid)) {
+    if (adminTokens.includes(user)) {
       setIsAdmin(true);
     }
-  }, [cookies]);
+  }, [user]);
 
   const signUserOut = () => {
     signOut(auth).then(() => {
-      removeCookie("isAuth");
-      removeCookie("uid");
-      removeCookie("isAdmin");
+      sessionStorage.setItem("userContext", null);
+      sessionStorage.setItem("authContext", false);
+      setUser(null);
+      setAuthContext(false);
+
       window.location.pathname = "/";
     });
   };

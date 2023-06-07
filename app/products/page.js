@@ -13,8 +13,8 @@ export default function Products() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [filter, setFilter] = useState({ cost: "all", name: "" });
 
-  const { items, addItem, isProductInCart, setCart } = useCartContext();
-  const { productList, setProductList, imagesLoaded } = useProductContext();
+  const { addItem } = useCartContext();
+  const { productList, imagesLoaded } = useProductContext();
 
   const addToCart = (product) => {
     addItem(product);
@@ -47,21 +47,8 @@ export default function Products() {
     }
 
     // update filtered products
-
     setFilteredProducts(filtered);
   };
-
-  useEffect(() => {
-    const cartItems = JSON.parse(sessionStorage.getItem("cartItems")) || [];
-    if (cartItems.length > 0) {
-      setCart(cartItems);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("cartItems", JSON.stringify(items));
-  }, [items]);
 
   useEffect(() => {
     applyFilters();

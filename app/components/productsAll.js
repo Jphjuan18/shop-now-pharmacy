@@ -1,28 +1,12 @@
 "use client";
-import { useEffect } from "react";
 import Image from "next/image";
-import { useCartContext } from "../context/cartContext";
 import Link from "next/link";
 import { useProductContext } from "../context/productsContext";
 import AddToCartButton from "../components/AddToCartButton";
-import Loading from "./loading";
 
 export default function Products() {
-  const { items, setCart } = useCartContext();
-
   const { productList, imagesLoaded } = useProductContext();
 
-  useEffect(() => {
-    const cartItems = JSON.parse(sessionStorage.getItem("cartItems")) || [];
-    if (cartItems.length > 0) {
-      setCart(cartItems);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("cartItems", JSON.stringify(items));
-  }, [items]);
   return (
     <>
       <div className="py-12 bg-gray-100">
@@ -58,7 +42,6 @@ export default function Products() {
               ))}
             </div>
           ) : (
-            // <Loading />
             <p className="h-screen"></p>
           )}
         </div>

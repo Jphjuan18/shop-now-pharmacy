@@ -5,6 +5,7 @@ import { Be_Vietnam_Pro } from "next/font/google";
 
 import { CartContextProvider } from "./context/cartContext";
 import { ProductsContextProvider } from "./context/productsContext";
+import { UserContextProvider } from "./context/userContext";
 import Head from "next/head";
 import { Metadata } from "next";
 
@@ -33,13 +34,15 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </Head>
       <body className={be_vietnam_pro_bold.className}>
-        <ProductsContextProvider>
-          <CartContextProvider>
-            <Navbar />
-            {children}
-            <Footer />
-          </CartContextProvider>
-        </ProductsContextProvider>
+        <UserContextProvider>
+          <ProductsContextProvider>
+            <CartContextProvider>
+              <Navbar />
+              {children}
+              <Footer />
+            </CartContextProvider>
+          </ProductsContextProvider>
+        </UserContextProvider>
       </body>
     </html>
   );

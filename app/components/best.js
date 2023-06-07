@@ -1,27 +1,14 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
-import { useCartContext } from "../context/cartContext";
+
 import Link from "next/link";
 import { useProductContext } from "../context/productsContext";
 import AddToCartButton from "../components/AddToCartButton";
 import Loading from "./loading";
 
 export default function Best() {
-  const { items, setCart } = useCartContext();
   const { bestProductList, imagesLoaded } = useProductContext();
-
-  useEffect(() => {
-    const cartItems = JSON.parse(sessionStorage.getItem("cartItems")) || [];
-    if (cartItems.length > 0) {
-      setCart(cartItems);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("cartItems", JSON.stringify(items));
-  }, [items]);
 
   return (
     <>
