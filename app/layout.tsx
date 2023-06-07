@@ -2,10 +2,9 @@ import "./globals.css";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { Be_Vietnam_Pro } from "next/font/google";
-
 import { CartContextProvider } from "./context/cartContext";
 import { ProductsContextProvider } from "./context/productsContext";
-import { UserContextProvider } from "./context/userContext";
+
 import Head from "next/head";
 import { Metadata } from "next";
 
@@ -34,15 +33,13 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </Head>
       <body className={be_vietnam_pro_bold.className}>
-        <UserContextProvider>
-          <ProductsContextProvider>
-            <CartContextProvider>
-              <Navbar />
-              {children}
-              <Footer />
-            </CartContextProvider>
-          </ProductsContextProvider>
-        </UserContextProvider>
+        <ProductsContextProvider>
+          <CartContextProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </CartContextProvider>
+        </ProductsContextProvider>
       </body>
     </html>
   );

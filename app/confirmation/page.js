@@ -21,7 +21,7 @@ export default function Confirmation() {
         <div className="text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-16 w-16 mx-auto mb-4 text-red-500"
+            className="h-16 w-16 mx-auto mb-4 text-green-500"
             viewBox="0 0 20 20"
             fill="currentColor"
           >

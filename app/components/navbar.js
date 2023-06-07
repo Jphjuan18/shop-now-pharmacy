@@ -3,33 +3,30 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { signOut } from "firebase/auth";
 import { auth } from "../../lib/firebase-config";
-import { useUserContext } from "../context/userContext";
+import { useCookies } from "react-cookie";
 
 export default function Navbar() {
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [isUid, setIsUid] = useState("");
   const [isAuth, setIsAuth] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const { user, setUser, authContext, setAuthContext } = useUserContext();
+  const [cookies, setCookie, removeCookie] = useCookies(["uid", "isAuth"]);
 
   useEffect(() => {
-    setIsAuth(authContext === true ? true : false);
-    setIsUid(user);
+    setIsAuth(cookies.isAuth === "true" ? true : false);
+    setIsUid(cookies.uid);
     const adminTokens = process.env.NEXT_PUBLIC_ADMIN_VARIABLES_TOKENS
       ? process.env.NEXT_PUBLIC_ADMIN_VARIABLES_TOKENS.split(",")
       : [];
-    if (adminTokens.includes(user)) {
+    if (adminTokens.includes(cookies.uid)) {
       setIsAdmin(true);
     }
-  }, [user]);
+  }, [cookies]);
 
   const signUserOut = () => {
     signOut(auth).then(() => {
-      sessionStorage.setItem("userContext", null);
-      sessionStorage.setItem("authContext", false);
-      setUser(null);
-      setAuthContext(false);
+      removeCookie("isAuth");
+      removeCookie("uid");
 
       window.location.pathname = "/";
     });

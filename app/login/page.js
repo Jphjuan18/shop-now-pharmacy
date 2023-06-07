@@ -16,10 +16,10 @@ import {
 } from "firebase/auth";
 import toast, { Toaster } from "react-hot-toast";
 import Forgot from "../components/forgot";
-import { useUserContext } from "../context/userContext";
+import { useCookies } from "react-cookie";
 
 function Login() {
-  const { user, setUser, authContext, setAuthContext } = useUserContext();
+  const [cookies, setCookie] = useCookies(["uid", "isAuth"]);
   const [signUp, setSignUp] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const usersCollectionRef = collection(db, "users");
@@ -58,11 +58,17 @@ function Login() {
   const signInWithGoogle = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        sessionStorage.setItem("userContext", result.user.uid);
-        sessionStorage.setItem("authContext", true);
-        setUser(result.user.uid);
-        setAuthContext(true);
+        setCookie("uid", result.user.uid, {
+          path: "/",
+          secure: true,
+          expires: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+        });
 
+        setCookie("isAuth", true, {
+          path: "/",
+          secure: true,
+          expires: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+        });
         // create the user document with the specified fields
         const newDocRef = doc(usersCollectionRef, result.user.uid);
         const data = {
@@ -113,10 +119,17 @@ function Login() {
   const signInWithEmail = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
-        sessionStorage.setItem("userContext", result.currentUser.uid);
-        sessionStorage.setItem("authContext", true);
-        setUser(result.currentUser.uid);
-        setAuth(true);
+        setCookie("uid", result.currentUser.uid, {
+          path: "/",
+          secure: true,
+          expires: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+        });
+
+        setCookie("isAuth", true, {
+          path: "/",
+          secure: true,
+          expires: new Date(Date.now() + 30 * 24 * 3600 * 1000),
+        });
 
         window.location.pathname = "/";
       })
