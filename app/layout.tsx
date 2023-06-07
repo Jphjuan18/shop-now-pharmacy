@@ -3,17 +3,23 @@ import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { Be_Vietnam_Pro } from "next/font/google";
 
-import { CartContextProvider } from "./context/dataContext";
+import { CartContextProvider } from "./context/cartContext";
 import { ProductsContextProvider } from "./context/productsContext";
+import Head from "next/head";
+import { Metadata } from "next";
 
 const be_vietnam_pro_bold = Be_Vietnam_Pro({
   subsets: ["latin"],
   weight: ["500"],
 });
 
-export const metadata = {
-  title: "Shop Now Pharmacy Home",
-  description: "Shop Now Pharmacy Page",
+export const metadata: Metadata = {
+  metadataBase: new URL("https://shop-now-e0870.firebaseapp.com/"),
+  title: {
+    default: "Shop Now Pharmacy",
+    template: `%s | Shop Now Pharmacy`,
+  },
+  description: "Shop Now Pharmacy is an online pharmacy store",
 };
 
 export default function RootLayout({
@@ -23,6 +29,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </Head>
       <body className={be_vietnam_pro_bold.className}>
         <ProductsContextProvider>
           <CartContextProvider>

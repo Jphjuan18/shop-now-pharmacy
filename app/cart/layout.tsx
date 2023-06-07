@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Products",
-  description: "Show Now Pharmacy Products Page",
+  title: "Cart",
+  description: "Show Now Pharmacy Shopping Cart Page",
 };
 export default function DashboardLayout({
   children, // will be a page or nested layout

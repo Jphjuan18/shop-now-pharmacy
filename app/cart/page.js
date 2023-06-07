@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import { getCartProducts } from "../helpers/getCartProducts"; // import the new function
 import Image from "next/image";
 import Link from "next/link";
-import { useCartContext } from "../context/dataContext";
+import { useCartContext } from "../context/cartContext";
+import Loading from "../components/loading";
 
 export default function Cart() {
   const [cartEmpty, setCartEmpty] = useState(false);
@@ -144,8 +145,7 @@ export default function Cart() {
               </div>
             ))
           ) : (
-            // Display a loading indicator while images are being fetched
-            <div>Loading...</div>
+            <Loading />
           )}
         </div>
       )}

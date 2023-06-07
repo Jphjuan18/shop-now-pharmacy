@@ -132,7 +132,7 @@ function Login() {
           expires: new Date(Date.now() + 30 * 24 * 3600 * 1000),
         });
 
-        window.location.pathname = "/subscription";
+        window.location.pathname = "/";
       })
       .catch((error) => {
         if (error.code === "auth/user-not-found") {

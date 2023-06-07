@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect } from "react";
 import Image from "next/image";
-import { useCartContext } from "../context/dataContext";
+import { useCartContext } from "../context/cartContext";
 import Link from "next/link";
 import { useProductContext } from "../context/productsContext";
 import AddToCartButton from "../components/AddToCartButton";
+import Loading from "./loading";
 
 export default function Best() {
   const { items, setCart } = useCartContext();
@@ -56,7 +57,7 @@ export default function Best() {
               ))}
             </div>
           ) : (
-            <p>Loading...</p>
+            <Loading />
           )}
         </div>
       </div>

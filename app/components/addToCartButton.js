@@ -1,5 +1,5 @@
 "use client";
-import { useCartContext } from "../context/dataContext";
+import { useCartContext } from "../context/cartContext";
 
 function AddToCartButton(props) {
   const { addItem, isProductInCart } = useCartContext();

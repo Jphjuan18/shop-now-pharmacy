@@ -1,8 +1,11 @@
 import { Metadata } from "next";
+import React from "react";
 
 export const metadata: Metadata = {
-  title: "Products",
-  description: "Show Now Pharmacy Products Page",
+  robots: {
+    index: false,
+    nocache: true,
+  },
 };
 export default function DashboardLayout({
   children, // will be a page or nested layout

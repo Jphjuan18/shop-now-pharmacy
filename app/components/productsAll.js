@@ -1,10 +1,11 @@
 "use client";
 import { useEffect } from "react";
 import Image from "next/image";
-import { useCartContext } from "../context/dataContext";
+import { useCartContext } from "../context/cartContext";
 import Link from "next/link";
 import { useProductContext } from "../context/productsContext";
 import AddToCartButton from "../components/AddToCartButton";
+import Loading from "./loading";
 
 export default function Products() {
   const { items, setCart } = useCartContext();
@@ -26,7 +27,9 @@ export default function Products() {
     <>
       <div className="py-12 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-4xl py-5">Products</h1>
+          {imagesLoaded && (
+            <h1 className="text-center text-4xl py-5">Products</h1>
+          )}
           {imagesLoaded ? (
             <div className="grid grid-cols-2 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {productList.map((product) => (
@@ -55,7 +58,8 @@ export default function Products() {
               ))}
             </div>
           ) : (
-            <p>Loading...</p>
+            // <Loading />
+            <p className="h-screen"></p>
           )}
         </div>
       </div>

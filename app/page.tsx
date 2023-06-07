@@ -1,9 +1,10 @@
-import Image from "next/image";
 import React from "react";
 import Best from "./components/best";
-import ProductsALL from "./components/productsAll"
+import ProductsALL from "./components/productsAll";
 import NewsletterSignUp from "./components/newsletterSignUp.js";
 import Link from "next/link";
+import Image from "next/image";
+import Banner from "./components/home/banner.js";
 
 export default function Home() {
   return (
@@ -18,8 +19,8 @@ export default function Home() {
             Shop Now
           </button>
         </Link>
-
       </section>
+      <section>{/* <Banner /> */}</section>
       <section>
         <Best />
         <ProductsALL />
@@ -27,7 +28,6 @@ export default function Home() {
       <section>
         <NewsletterSignUp />
       </section>
-
     </main>
   );
 }

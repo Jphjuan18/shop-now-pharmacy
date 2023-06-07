@@ -1,11 +1,24 @@
 import Link from "next/link";
 import Image from "next/image";
 import Best from "../../components/best";
+import Reviews from "../../components/reviews";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { ref, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../lib/firebase-config";
 
 import AddToCartButton from "../../components/AddToCartButton";
+
+export async function generateMetadata({ params }) {
+  const { Name, Description } = await getProductDetails(params.id);
+
+  if (!Name) {
+    return { title: "Not Found", description: "The page is not found" };
+  }
+  return {
+    title: Name,
+    description: Description,
+  };
+}
 
 async function getProductDetails(productId) {
   const q = query(collection(db, "products"), where("id", "==", productId));
@@ -77,6 +90,7 @@ export default async function Product({ params }) {
           </div>
         </div>
       </div>
+      <Reviews productId={id} />
       <Best />
     </>
   );

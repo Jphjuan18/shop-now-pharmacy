@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import InputField from "../helpers/inputField.js";
 import { getCartProducts } from "../helpers/getCartProducts"; // import the new function
-import { useCartContext } from "../context/dataContext";
+import { useCartContext } from "../context/cartContext.js";
 import Image from "next/image";
 import Link from "next/link";
 
