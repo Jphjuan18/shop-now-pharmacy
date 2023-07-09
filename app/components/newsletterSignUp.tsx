@@ -1,14 +1,13 @@
-//compnent to subscribe to email notifications
 "use client";
 import React, { useState } from "react";
 import { db } from "../../lib/firebase-config";
 import { collection, addDoc } from "firebase/firestore";
 
 export default function NewsletterSignUp() {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [subscribed, setSubscribed] = useState<boolean>(false);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const docRef = await addDoc(collection(db, "subscribers"), {
       Email: email,

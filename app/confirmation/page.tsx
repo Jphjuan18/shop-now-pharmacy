@@ -1,10 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useCartContext } from "../context/cartContext";
 
 export default function Confirmation() {
   const [loading, setLoading] = useState(true);
+  const { setCart } = useCartContext() as any;
 
   useEffect(() => {
+    sessionStorage.setItem("cartItems", JSON.stringify([]));
+    setCart([]);
     // Simulate loading for 2 seconds
     setTimeout(() => {
       setLoading(false);

@@ -1,4 +1,5 @@
 "use client";
+// Context to improve performance
 import { createContext, useState, useEffect, useContext } from "react";
 
 import {

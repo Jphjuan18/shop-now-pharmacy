@@ -1,10 +1,9 @@
 import React from "react";
 import Best from "./components/best";
 import ProductsALL from "./components/productsAll";
-import NewsletterSignUp from "./components/newsletterSignUp.js";
+import NewsletterSignUp from "./components/newsletterSignUp";
 import Link from "next/link";
-import Image from "next/image";
-import Banner from "./components/home/banner.js";
+// import Banner from "./components/home/banner.js";
 
 export default function Home() {
   return (

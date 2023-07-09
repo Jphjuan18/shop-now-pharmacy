@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useCartContext } from "../context/cartContext";
 import Link from "next/link";
 import { useProductContext } from "../context/productsContext";
 import AddToCartButton from "../components/AddToCartButton";
@@ -13,12 +12,7 @@ export default function Products() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [filter, setFilter] = useState({ cost: "all", name: "" });
 
-  const { addItem } = useCartContext();
   const { productList, imagesLoaded } = useProductContext();
-
-  const addToCart = (product) => {
-    addItem(product);
-  };
 
   const applyFilters = () => {
     let filtered = [...productList];

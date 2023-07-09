@@ -119,7 +119,7 @@ function Login() {
   const signInWithEmail = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
-        setCookie("uid", result.currentUser.uid, {
+        setCookie("uid", result.user.uid, {
           path: "/",
           secure: true,
           expires: new Date(Date.now() + 30 * 24 * 3600 * 1000),
